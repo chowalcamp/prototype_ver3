@@ -1,101 +1,96 @@
-import Image from "next/image";
+// prototype_v3/src/app/swap/page.tsx
+'use client' // 클라이언트 컴포넌트로 지정
 
-export default function Home() {
+import React, { useContext, useEffect, useState } from 'react'
+// import { useMoralis, useChain, useOneInchTokens } from 'react-moralis'
+import ThemeContext from '@/context/theme-context'
+import ChainContext from '@/context/chain-context'
+import SwapResultModal from '@/components/swap/swapResultModal' // 경로 조정
+import { TokenList } from '@/types' // 경로 조정
+import SwapForm from '@/components/swap/swapForm'
+import NavBar from '@/components/NavBar/NavBar'
+
+const Swap: React.FC = () => {
+  const chainCtx = useContext(ChainContext)
+  const { isLight } = useContext(ThemeContext)
+  // const { isAuthenticated, isInitialized, initialize } = useMoralis()
+  // const { switchNetwork } = useChain()
+  // const { getSupportedTokens, data } = useOneInchTokens({
+  //   chain: chainCtx.chain,
+  // })
+  const [tokenList, setTokenList] = useState<TokenList | []>([])
+  const [showTransactionModal, setShowTransactionModal] = useState(false)
+  const [txHash, setTxHash] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [madeTx, setMadeTx] = useState(false)
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+
+  const closeModal = () => {
+    setShowTransactionModal(false)
+    setTxHash('')
+    setErrorMessage('')
+  }
+
+  useEffect(() => {
+    const updateNetwork = async () => {
+      // if (isAuthenticated) {
+      //   if (chainCtx.chain === 'eth') await switchNetwork('0x1')
+      //   if (chainCtx.chain === 'bsc') await switchNetwork('0x38')
+      //   if (chainCtx.chain === 'polygon') await switchNetwork('0x89')
+      // }
+    }
+    // if (isInitialized) {
+    //   updateNetwork()
+    // }
+  }, [chainCtx.chain])
+
+  useEffect(() => {
+    const getTokens = async () => {
+      // initialize()
+      // await getSupportedTokens()
+    }
+
+    // if (data.length === 0) {
+    //   getTokens()
+    // } else {
+    //   const formattedData = JSON.parse(JSON.stringify(data!, null, 2))
+    //   setTokenList(Object.values(formattedData.tokens))
+    // }
+  }, [])
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <div className={isLight ? styles.containerLight : styles.containerDark}>
+      <NavBar
+        className={isLight ? styles.containerLight : styles.containerDark} // 스타일 추가
+        loginModalOpen={isLoginModalOpen}
+        setLoginModalOpen={setIsLoginModalOpen}
+      />
+      {showTransactionModal && (
+        <SwapResultModal
+          closeModal={closeModal}
+          txHash={txHash}
+          errorMessage={errorMessage}
         />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      )}
+      <div className="w-full h-full flex justify-center items-start mt-32">
+        <SwapForm
+          tokenList={tokenList}
+          setLoginModalOpen={() => {}}
+          openTransactionModal={() => {}}
+          getTxHash={() => {}}
+          getErrorMessage={() => {}}
+          setMadeTx={setMadeTx}
+        />
+      </div>
     </div>
-  );
+  )
+}
+
+export default Swap
+
+const styles = {
+  containerLight:
+    'w-screen h-screen bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 overflow-hidden relative',
+  containerDark:
+    'w-screen h-screen bg-gradient-to-r from-indigo-800 via-blue-900 to-zinc-800 overflow-hidden relative',
 }
