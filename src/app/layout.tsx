@@ -1,11 +1,10 @@
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import './globals.css'
-// import { MoralisProvider } from 'react-moralis' // MoralisProvider 추가
 import { ThemeContextProvider } from '@/context/theme-context' // 테마 컨텍스트
-import { ChainContextProvider } from '@/context/chain-context' // 체인 컨텍스트
-// import { AuthContextProvider } from "@/context/auth-context"; // 인증 컨텍스트
-
+import NavBarWrapper from '@/components/navBarWrapper/navbarWrapper'
+import { WagmiContext } from '@/context/wagmi-context'
+import { AccountProvider } from '@/context/account-context'
 const geistSans = localFont({
   src: '../../public/fonts/GeistVF.woff',
   variable: '--font-geist-sans',
@@ -37,13 +36,14 @@ export default function RootLayout({
       >
         {/* <MoralisProvider serverUrl={SERVER_URL} appId={APP_ID}> */}
         <ThemeContextProvider>
-          <ChainContextProvider>
-            {/* <AuthContextProvider> */}
-            <main>
-              {children} {/* 하위 페이지의 콘텐츠 */}
-            </main>
-            {/* </AuthContextProvider> */}
-          </ChainContextProvider>
+          <WagmiContext>
+            <AccountProvider>
+              <main>
+                <NavBarWrapper />
+                {children}
+              </main>
+            </AccountProvider>
+          </WagmiContext>
         </ThemeContextProvider>
         {/* </MoralisProvider> */}
       </body>

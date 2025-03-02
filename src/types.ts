@@ -1,6 +1,6 @@
 export type LanguageType = 'en' | 'es'
 
-export type TokenDetails = {
+export type TokenList = {
   logoURI: string
   name: string
   symbol: string
@@ -9,7 +9,7 @@ export type TokenDetails = {
   decimals: number
 }
 
-export type TokenList = TokenDetails[]
+// export type TokenList = TokenDetails[]
 
 export type Chain = 'bsc' | 'eth' | 'polygon'
 

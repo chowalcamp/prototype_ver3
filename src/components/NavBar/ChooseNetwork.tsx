@@ -1,40 +1,37 @@
-// prototype_v3/src/app/components/NavBar/ChooseNetwork.tsx
-'use client' // 클라이언트 컴포넌트로 지정
+'use client'
 
-import React, { useContext } from 'react'
+import React from 'react'
 import ethLogo from '../../../public/images/eth.png'
 import bscLogo from '../../../public/images/bsc.png'
 import maticLogo from '../../../public/images/matic.svg'
 import { ExternalLinkIcon } from '@heroicons/react/outline'
-import { Chain } from '@/types'
-import ChainContext from '@/context/chain-context'
+import { useSwitchChain, useAccount } from 'wagmi'
+import { mainnet, polygon, bsc } from 'wagmi/chains' // Wagmi에서 제공하는 체인 정보
 import Image from 'next/image'
+import { Chain } from '@/types'
 
 type ChooseNetworkProps = {
   isChoosing(val: boolean): void
-  activeChain: Chain
-  chooseChain(val: Chain): void
 }
 
-const ChooseNetwork = ({
-  isChoosing,
-  activeChain,
-  chooseChain,
-}: ChooseNetworkProps): JSX.Element => {
-  const chainCtx = useContext(ChainContext)
+const ChooseNetwork = ({ isChoosing }: ChooseNetworkProps): JSX.Element => {
+  const { chains, switchChain } = useSwitchChain()
 
-  const handleChoice = (val: Chain) => {
+  // 네트워크 선택 핸들러
+  const handleChoice = (chainId: number) => {
     return (event: React.MouseEvent) => {
       event.preventDefault()
-      chooseChain(val)
-      chainCtx.changeChain(val)
-      isChoosing(false)
+      switchChain({ chainId: chainId }) // Wagmi를 통해 네트워크 전환
+      isChoosing(false) // 네트워크 선택 UI 닫기
     }
   }
 
+  // 현재 활성화된 네트워크 확인
+  // const activeChain = chains?.id
+
   return (
     <div
-      className="absolute top-16 bg-white rounded-2xl min-w-[250px] min-h-40 p-4"
+      className="absolute top-16 bg-white rounded-2xl min-w-[250px] min-h-40 p-4 z-10"
       onMouseLeave={() => isChoosing(false)}
     >
       {/* Header */}
@@ -42,29 +39,29 @@ const ChooseNetwork = ({
         Select a network
       </div>
 
-      {/* Ethereum */}
+      {/* Ethereum
       <div
         className={`w-full cursor-pointer rounded-lg ${
-          activeChain === 'eth' ? 'mb-3 p-4 bg-gray-100' : 'mb-4 p-2'
+          activeChain === mainnet.id ? 'mb-3 p-4 bg-gray-100' : 'mb-4 p-2'
         }`}
       >
         <div
           className={`w-full flex items-center justify-between ${
-            activeChain === 'eth' ? 'mb-3' : ''
+            activeChain === mainnet.id ? 'mb-3' : ''
           }`}
-          onClick={handleChoice('eth')}
+          onClick={handleChoice(mainnet.id)} // Ethereum 네트워크로 전환
         >
           <div className="flex items-center">
             <Image src={ethLogo} alt="eth" className="h-5 w-5 mr-3" />
             <span>Ethereum</span>
           </div>
-          {activeChain === 'eth' && (
+          {activeChain === mainnet.id && (
             <span className="w-2 h-2 bg-green-800 rounded-full"></span>
           )}
         </div>
-        {activeChain === 'eth' && (
+        {activeChain === mainnet.id && (
           <a
-            href="https://ropsten.etherscan.io"
+            href="https://etherscan.io"
             target="_blank"
             rel="noreferrer"
             className="flex justify-between items-center w-full pl-1 hover:underline cursor-pointer"
@@ -75,31 +72,31 @@ const ChooseNetwork = ({
             <ExternalLinkIcon className="w-4 h-4 text-black" />
           </a>
         )}
-      </div>
+      </div> */}
 
       {/* Polygon */}
-      <div
+      {/* <div
         className={`w-full cursor-pointer rounded-lg ${
-          activeChain === 'polygon' ? 'mb-3 p-4 bg-gray-100' : 'mb-4 p-2'
+          activeChain === polygon.id ? 'mb-3 p-4 bg-gray-100' : 'mb-4 p-2'
         }`}
       >
         <div
           className={`w-full flex items-center justify-between ${
-            activeChain === 'polygon' ? 'mb-3' : ''
+            activeChain === polygon.id ? 'mb-3' : ''
           }`}
-          onClick={handleChoice('polygon')}
+          onClick={handleChoice(polygon.id)} // Polygon 네트워크로 전환
         >
           <div className="flex items-center">
             <Image src={maticLogo} alt="matic" className="h-5 w-5 mr-3" />
             <span>Polygon</span>
           </div>
-          {activeChain === 'polygon' && (
+          {activeChain === polygon.id && (
             <span className="w-2 h-2 bg-green-800 rounded-full"></span>
           )}
         </div>
-        {activeChain === 'polygon' && (
+        {activeChain === polygon.id && (
           <a
-            href="https://mumbai.polygonscan.com/"
+            href="https://polygonscan.com/"
             target="_blank"
             rel="noreferrer"
             className="flex justify-between items-center w-full pl-1 hover:underline cursor-pointer"
@@ -110,31 +107,31 @@ const ChooseNetwork = ({
             <ExternalLinkIcon className="w-4 h-4 text-black" />
           </a>
         )}
-      </div>
+      </div> */}
 
-      {/* Bsc */}
-      <div
+      {/* BSC */}
+      {/* <div
         className={`w-full cursor-pointer rounded-lg ${
-          activeChain === 'bsc' ? 'mb-3 p-4 bg-gray-100' : 'p-2'
+          activeChain === bsc.id ? 'mb-3 p-4 bg-gray-100' : 'p-2'
         }`}
       >
         <div
           className={`w-full flex items-center justify-between ${
-            activeChain === 'bsc' ? 'mb-3' : ''
+            activeChain === bsc.id ? 'mb-3' : ''
           }`}
-          onClick={handleChoice('bsc')}
+          onClick={handleChoice(bsc.id)} // BSC 네트워크로 전환
         >
           <div className="flex items-center">
             <Image src={bscLogo} alt="bsc" className="h-5 w-5 mr-3" />
             <span>BSC</span>
           </div>
-          {activeChain === 'bsc' && (
+          {activeChain === bsc.id && (
             <span className="w-2 h-2 bg-green-800 rounded-full"></span>
           )}
         </div>
-        {activeChain === 'bsc' && (
+        {activeChain === bsc.id && (
           <a
-            href="https://testnet.bscscan.com/"
+            href="https://bscscan.com/"
             target="_blank"
             rel="noreferrer"
             className="flex justify-between items-center w-full pl-1 hover:underline cursor-pointer"
@@ -145,7 +142,16 @@ const ChooseNetwork = ({
             <ExternalLinkIcon className="w-4 h-4 text-black" />
           </a>
         )}
-      </div>
+      </div> */}
+
+      {chains.map((chain) => (
+        <button
+          key={chain.id}
+          onClick={() => switchChain({ chainId: chain.id })}
+        >
+          Switch to {chain.name}
+        </button>
+      ))}
     </div>
   )
 }

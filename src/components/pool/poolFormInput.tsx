@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import SwapFormChangeTokenButton from './swapFormChangeTokenButton'
 import { TokenList } from '@/types'
 import type { SelectedToken } from '@/types'
 import { DebounceInput } from 'react-debounce-input'
 import TokenSelectModal from '../UI/TokenSelectModal'
+import SwapFormChangeTokenButton from '../swap/swapFormChangeTokenButton'
 
-type SwapFormInputProps = {
+type PoolFormInputProps = {
   initial?: boolean
   tokenList: TokenList[]
   choose(val: SelectedToken): void
@@ -19,7 +19,7 @@ type SwapFormInputProps = {
   changeCounterValue(val: number | undefined | string): void
 }
 
-const SwapFormInput = ({
+const PoolFormInput = ({
   initial,
   tokenList,
   choose,
@@ -28,7 +28,7 @@ const SwapFormInput = ({
   getQuote,
   changeValue,
   changeCounterValue,
-}: SwapFormInputProps): JSX.Element => {
+}: PoolFormInputProps): JSX.Element => {
   const [isSelecting, setIsSelecting] = useState(false)
   const { t } = useTranslation()
   const [inputValue, setInputValue] = useState<number | undefined | string>()
@@ -71,4 +71,4 @@ const SwapFormInput = ({
   )
 }
 
-export default SwapFormInput
+export default PoolFormInput

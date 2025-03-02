@@ -2,7 +2,7 @@
 
 import React, { useContext, useEffect, useState } from 'react'
 import { XIcon } from '@heroicons/react/solid'
-import { TokenDetails, TokenList } from '@/types' // 경로 조정
+import { TokenList } from '@/types' // 경로 조정
 import ThemeContext from '@/context/theme-context' // 경로 조정
 import type { SelectedToken } from '@/types' // 경로 조정
 import { DebounceInput } from 'react-debounce-input'
@@ -10,7 +10,7 @@ import TokenListItem from './TokenListItem'
 
 type TokenSelectModalProps = {
   initial?: boolean
-  tokenList: TokenList
+  tokenList: TokenList[]
   select(val: boolean): void
   choose(val: SelectedToken): void
   isSelecting(val: boolean): void
@@ -24,9 +24,7 @@ const TokenSelectModal = ({
 }: TokenSelectModalProps): JSX.Element => {
   const themeCtx = useContext(ThemeContext)
   const [searchedValue, setSearchedValue] = useState('')
-  const [customTokenList, setCustomTokenList] = useState<TokenDetails[]>(
-    tokenList,
-  )
+  const [customTokenList, setCustomTokenList] = useState<TokenList[]>(tokenList)
 
   useEffect(() => {
     if (searchedValue.slice(0, 2).includes('0x')) {

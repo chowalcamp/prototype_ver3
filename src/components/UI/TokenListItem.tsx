@@ -39,7 +39,13 @@ const TokenListItem = ({
       className="w-full h-14 list-none flex items-center px-3 cursor-pointer"
       onClick={handleClick}
     >
-      <Image src={logo} alt="" className="h-8 w-8 flex-[1/4] mr-3" />
+      <Image
+        src={logo}
+        alt=""
+        className="h-8 w-8 flex-[1/4] mr-3"
+        width={32}
+        height={32}
+      />
       <div className="flex-1 flex flex-col">
         <span className="font-semibold">{symbol}</span>
         <span className="text-xs text-gray-600">{name.split(' ')[0]}</span>

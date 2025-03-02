@@ -32,7 +32,7 @@ const MoreOptionsDropDown = ({
 
   return (
     <span
-      className="bg-white min-w-[180px] h-20 rounded-lg absolute right-3 top-20 shadow-md p-3 flex flex-col justify-between"
+      className="bg-white min-w-[180px] h-20 rounded-lg absolute right-3 top-20 shadow-md p-3 flex flex-col justify-between z-10"
       onMouseLeave={() => showOptions(false)}
     >
       {changeLanguage === false && (

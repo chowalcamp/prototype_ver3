@@ -8,26 +8,35 @@ import ThemeContext from '@/context/theme-context'
 import type { TokenList } from '@/types'
 import type { SelectedToken } from '@/types'
 import { useTranslation } from 'react-i18next'
+import PoolFormInput from './poolFormInput'
+import SwapFormChangeTokenButton from '../swap/swapFormChangeTokenButton'
+import TokenSelectModal from '../UI/TokenSelectModal'
+import PoolButton from './poolButton'
 
-type SwapFormProps = {
+type PoolFormProps = {
   tokenList: TokenList[]
-  setLoginModalOpen(val: boolean): void
-  openTransactionModal(val: boolean): void
-  getTxHash(hash: string): void
-  getErrorMessage(message: string): void
-  setMadeTx(val: boolean): void
+  tokenA: string
+  tokenB: string
+  handleTokenAChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  handleTokenBChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  amountA: string
+  amountB: string
+  handleAmountAChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  handleAmountBChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const SwapForm = ({
+const PoolForm = ({
   tokenList,
-  setLoginModalOpen,
-  openTransactionModal,
-  getTxHash,
-  getErrorMessage,
-  setMadeTx,
-}: SwapFormProps): JSX.Element => {
+  tokenA,
+  tokenB,
+  handleTokenAChange,
+  handleTokenBChange,
+  amountA,
+  amountB,
+  handleAmountAChange,
+  handleAmountBChange,
+}: PoolFormProps): JSX.Element => {
   const { isLight } = useContext(ThemeContext)
-  const { t } = useTranslation()
   const [firstToken, setFirstToken] = useState<SelectedToken>({
     decimals: 0,
   })
@@ -39,13 +48,7 @@ const SwapForm = ({
     number | undefined | string
   >()
   const [gas, setGas] = useState<number | undefined | string>()
-
-  // useEffect(() => {
-  //   setFirstToken({
-  //     address: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-  //     decimals: 18,
-  //   })
-  // }, [])
+  const [isSelecting, setIsSelecting] = useState(false)
 
   const getQuoteFirst = async (val: string) => {
     const amount = Number(Number(val) * 10 ** firstToken.decimals)
@@ -99,8 +102,7 @@ const SwapForm = ({
     // const amount = Number(Number(firstAmount) * 10 ** firstToken.decimals);
     // const address = await Moralis.User.current()?.get("ethAddress");
 
-    openTransactionModal(true)
-
+    // try {
     // try {
     //   const res = await Moralis.Plugins.oneInch.swap({
     //     chain: chain,
@@ -110,15 +112,16 @@ const SwapForm = ({
     //     fromAddress: address,
     //     slippage: 1,
     //   });
-    openTransactionModal(true)
+    // openTransactionModal(true)
     //   getTxHash(res.transactionHash);
-    setMadeTx(true)
+    // setMadeTx(true)
     // } catch (error) {
     //   let message;
     //   if (error instanceof Error) message = error.message;
     //   else message = String((error as Error).message);
     //   getErrorMessage(message);
     // }
+    alert('유동성 풀 추가')
 
     setFirstAmount('')
     setSecondAmount('')
@@ -127,36 +130,57 @@ const SwapForm = ({
 
   return (
     <form className={isLight ? styles.light : styles.dark}>
-      <div className="w-full h-full rounded-3xl p-2 select-none">
+      <div className="w-full rounded-3xl p-2 select-none">
         <SwapFormHeader />
-        <SwapFormInput
-          initial={true}
-          tokenList={tokenList}
-          choose={setFirstToken}
-          selected={firstToken}
-          getQuote={getQuoteFirst}
-          value={firstAmount}
-          changeValue={setFirstAmount}
-          changeCounterValue={setSecondAmount}
-        />
-        <SwapFormInput
-          tokenList={tokenList}
-          choose={setSecondToken}
-          selected={secondToken}
-          getQuote={getQuoteSecond}
-          value={secondAmount}
-          changeValue={setFirstAmount}
-          changeCounterValue={setFirstAmount}
-        />
-        {gas && (
-          <div className="w-full h-3 flex items-center justify-center py-4">
-            <div className="w-[95%] h-full flex items-center justify-end text-sm text-white font-semibold">
-              {t('swap_form.estimated')}
-              {gas}
+        <div className="w-full h-full flex justify-center items-center">
+          <div className="w-1/2 h-full flex flex-col gap-2 mt-2">
+            <p className="text-white text-left pl-2">CHOOSE TOKEN PAIR</p>
+            <div className="flex items-center gap-2">
+              <SwapFormChangeTokenButton
+                initial={true}
+                select={setIsSelecting}
+                selected={firstToken}
+              />
+              <p className="text-white">+</p>
+              <SwapFormChangeTokenButton
+                initial={false}
+                select={setIsSelecting}
+                selected={secondToken}
+              />
+              {isSelecting && (
+                <TokenSelectModal
+                  tokenList={tokenList}
+                  select={setIsSelecting}
+                  choose={setSecondToken}
+                  isSelecting={setIsSelecting}
+                />
+              )}
             </div>
+            <PoolFormInput
+              initial={true}
+              tokenList={tokenList}
+              choose={setFirstToken}
+              selected={firstToken}
+              getQuote={getQuoteFirst}
+              value={firstAmount}
+              changeValue={setFirstAmount}
+              changeCounterValue={setSecondAmount}
+            />
+            <PoolFormInput
+              tokenList={tokenList}
+              choose={setSecondToken}
+              selected={secondToken}
+              getQuote={getQuoteSecond}
+              value={secondAmount}
+              changeValue={setSecondAmount}
+              changeCounterValue={setFirstAmount}
+            />
+            <PoolButton />
           </div>
-        )}
-        <SwapButton setLoginModalOpen={setLoginModalOpen} trySwap={makeSwap} />
+          <div className="w-1/2 h-full">
+            트랜젝션 설정, 그래프, 가격및 풀 지분 자리
+          </div>
+        </div>
       </div>
     </form>
   )
@@ -164,9 +188,9 @@ const SwapForm = ({
 
 const styles = {
   light:
-    'border-2 border-orange-400 bg-orange-400 rounded-3xl h-90 w-11/12 sm:w-[500px]',
+    'border-2 border-orange-400 bg-orange-400 rounded-3xl h-90 w-11/12 sm:w-[1000px]',
   dark:
-    'border-2 border-blue-700 bg-blue-700 rounded-3xl h-90 w-11/12 sm:w-[500px]',
+    'border-2 border-blue-700 bg-blue-700 rounded-3xl h-90 w-11/12 sm:w-[1000px]',
 }
 
-export default SwapForm
+export default PoolForm
